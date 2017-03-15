@@ -1,0 +1,151 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Chat socket.io</title>
+    <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="http://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<style>
+  #messageArea{
+     display: none;
+  }
+  #messageForm{
+      position: fixed;
+    bottom: 0;
+    width: 100%;
+  }
+    </style>
+  </head>
+  <body>
+      <div class="wrapper">
+    <div class="container">
+        <div id="userFormArea" class="row">
+            <div class="col-md-12">
+                <form id="userForm">
+                    <div class="form-group">
+                        <label>Enter Username</label>
+                        <input type="text" class="form-control" id="username">
+                        </br>
+                        <input type="sumbit" class="btn btn-primary" value="Sumbit" onclick="getUsername()">
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div id="Name">
+            
+        </div>
+        <div class="row" id="messageArea">
+            <div class="col-md-4">
+                <div class="well">
+                    <h3>Online Users</h3>
+                    <ul class="list-group" id="user">
+
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div id="showName"></div>
+                <div class="chat" id="chat" style="overflow: scroll; height:500px;">
+
+                </div>
+                
+                    <form id="messageForm">
+                    <div class="form-group">
+                        <label>Enter Message</label>
+                        <textarea class="form-control" id="message"></textarea>
+                        </br>
+                        <input type="submit" class="btn btn-primary" value="Send">
+                    </div>
+                </form>         
+            </div>
+        </div>
+        </div>
+        </div>
+         <script>
+              var socket=io.connect();
+                var $messageArea=$('#messageArea');
+                var $userFormArea=$('#userFormArea');
+                var $Name=$('Name');
+                 var $showName=$('#showName');
+             
+                     
+              
+               
+   $(function(){
+     
+      var $messageForm=$('#messageForm');
+      var $message=$('#message');
+      var $chat=$('#chat');   
+      var $usernameForm=$('#userForm');
+      var $user=$('#user');
+      var $username=$('#username');
+       var scropChat=$('#chat');
+      
+       const messages = document.getElementById('chat');
+
+  
+function getMessages() {
+	// Prior to getting your messages.
+  shouldScroll = messages.scrollTop + messages.clientHeight === messages.scrollHeight;
+  /*
+   * Get your messages, we'll just simulate it by appending a new one syncronously.
+   */
+  
+  // After getting your messages.
+  if (!shouldScroll) {
+    scrollToBottom();
+  }
+}
+
+function scrollToBottom() {
+  messages.scrollTop = messages.scrollHeight;
+}
+
+scrollToBottom();
+
+
+      //sumbit message
+      $messageForm.submit(function(e){
+          e.preventDefault();
+          socket.emit('sendmessage',$message.val());
+          $message.val('');
+      });
+
+      //Show message
+      socket.on('newmessage',function(data){
+          $chat.append('<div class="well"><strong>'+data.users+'</strong>:'+data.msg+'</div>');
+          getMessages();
+      });
+     
+      //get List user
+      socket.on('getusers',function(data){
+          var html='';
+          for(i=0;i<data.length;i++){
+            html+='<li class="list-group-item">'+data[i]+'</li>';
+          }
+          $user.html(html);
+      });
+
+    });
+    //sumbit username
+    function getUsername(){
+         var userName= document.getElementById("username").value;
+ socket.emit('newuser',userName,function(data){
+              if(data){
+                 $userFormArea.hide();
+                 $messageArea.show();
+                 $Name.append('<div class="well"><strong>'+userName+'</strong>');
+                 $showName.append('<strong>Hello,'+userName+'!</strong>');
+
+              }
+              userName="";
+
+    });
+    }
+    </script>
+  </body>
+ 
+</html>
+
+   

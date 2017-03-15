@@ -1,0 +1,20 @@
+{
+  "name": "chatonline",
+  "version": "1.0.0",
+  "description": "Chat simple socket.io",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "socket.io":"*",
+    "express":"*"
+  },
+  "keywords": [
+    "chat",
+    "socket.io"
+    
+  ],
+  "author": "NguyenNgocPhuocLong",
+  "license": "ISC"
+}
